@@ -12,7 +12,7 @@ pub fn hello() {
 
 pub fn min_disc(points: &[Point]) -> Ring {
     let mut current_ring = smallest_ring_points(&points[0], &points[1]);
-    for (i, point) in points[2..].iter().enumerate() {
+    for (i, point) in points.iter().enumerate().skip(2) {
         if !current_ring.is_point_in_ring(&point) {
             current_ring = min_disc_with_point(&points[..i-1], point);
         }
@@ -22,7 +22,7 @@ pub fn min_disc(points: &[Point]) -> Ring {
 
 fn min_disc_with_point(points: &[Point], q: &Point) -> Ring {
     let mut current_ring = smallest_ring_points(&points[0], &q);
-    for (i, point) in points[1..].iter().enumerate() {
+    for (i, point) in points.iter().enumerate().skip(1) {
         if !current_ring.is_point_in_ring(&point) {
             current_ring = min_disc_with_2_points(&points[..i-1], &point, &q);
         }
@@ -53,6 +53,9 @@ fn smallest_ring_points(point1: &Point, point2: &Point) -> Ring {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rand::{thread_rng, Rng};
+    use rand::seq::SliceRandom;
+
     #[test]
     fn test_3_points() {
         let p1 = Point {
@@ -72,5 +75,22 @@ mod tests {
         assert_eq!(ring.centre.x, 0.0);
         assert_eq!(ring.centre.y, 0.0);
         assert_eq!(ring.radius, 1.0);
+    }
+
+    #[test]
+    fn test_is_circle_always_same() {
+        let mut rng = thread_rng();
+        let mut points: Vec<Point> = (0..10000).map(|_| {
+            Point {
+                x: rng.gen(),
+                y: rng.gen(),
+            }
+        }).collect();
+        let ring1 = min_disc(&points);
+        let mut points_clone = points.clone();
+        points_clone.shuffle(&mut rng);
+        assert_ne!(points_clone[0], points[0]);
+        let ring2 = min_disc(&points_clone);
+        assert_eq!(ring1, ring2);
     }
 }

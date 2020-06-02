@@ -1,6 +1,6 @@
 use super::point::Point;
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct Ring {
     pub centre: Point,
     pub radius: f64,
