@@ -8,7 +8,7 @@ pub struct Ring {
 
 impl Ring {
     pub fn is_point_in_ring(&self, point: &Point) -> bool {
-        self.centre.distance_to(&point) < self.radius
+        self.centre.distance_to(&point).le(&(self.radius + 1e-6))
     }
     pub fn from_3_points(p1: &Point, p2: &Point, p3: &Point) -> Self {
         let centre = Point {

@@ -91,6 +91,19 @@ mod tests {
         points_clone.shuffle(&mut rng);
         assert_ne!(points_clone[0], points[0]);
         let ring2 = min_disc(&points_clone);
-        assert_eq!(ring1, ring2);
+        assert_eq!(ring2, ring1);
+    }
+
+    #[test]
+    fn test_all_points_inside_ring() {
+        let mut rng = thread_rng();
+        let mut points: Vec<Point> = (0..10000).map(|_| {
+            Point {
+                x: rng.gen(),
+                y: rng.gen(),
+            }
+        }).collect();
+        let ring = min_disc(&points);
+        points.iter().for_each(|point| { assert!(ring.is_point_in_ring(point)) });
     }
 }
